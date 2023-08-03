@@ -10,19 +10,19 @@
     We also take into account your Max used storage and use that to calculate storage costs.
 
 .EXAMPLE
-    ./CalculateServerlessUsage.ps1
+    PS> ./CalculateServerlessUsage.ps1
     Will output estimates for all databases on your subscription.
 
 .EXAMPLE
-    ./CalculateServerlessUsage.ps1 -ResourceGroupName <your resource group>
+    PS> ./CalculateServerlessUsage.ps1 -ResourceGroupName <your resource group>
     Will output estimates for all databases in the specified resource group.
 
 .EXAMPLE
-    ./CalculateServerlessUsage.ps1 -ResourceGroupName <your resource group> -ServerName <your server name>
+    PS> ./CalculateServerlessUsage.ps1 -ResourceGroupName <your resource group> -ServerName <your server name>
     Will output estimates for all databases in the specified logical server.
 
 .EXAMPLE
-    ./CalculateServerlessUsage.ps1 -ResourceGroupName <your resource group> -ServerName <your server name> -DatabaseName <your database name>
+    PS> ./CalculateServerlessUsage.ps1 -ResourceGroupName <your resource group> -ServerName <your server name> -DatabaseName <your database name>
     Will output estimates for the specified database.
 #>
 param(

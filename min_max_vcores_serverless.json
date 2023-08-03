@@ -1,0 +1,64 @@
+{
+    "serverless_skus": [
+        {
+            "min_cpu": 0.5,
+            "max_cpu": 1
+        },
+        {
+            "min_cpu": 0.5,
+            "max_cpu": 2
+        },
+        {
+            "min_cpu": 0.5,
+            "max_cpu": 4
+        },
+        {
+            "min_cpu": 0.75,
+            "max_cpu": 6
+        },
+        {
+            "min_cpu": 1,
+            "max_cpu": 8
+        },
+        {
+            "min_cpu": 1.25,
+            "max_cpu": 10
+        },
+        {
+            "min_cpu": 1.5,
+            "max_cpu": 12
+        },
+        {
+            "min_cpu": 1.75,
+            "max_cpu": 14
+        },
+        {
+            "min_cpu": 2,
+            "max_cpu": 16
+        },
+        {
+            "min_cpu": 2.25,
+            "max_cpu": 18
+        },
+        {
+            "min_cpu": 2.5,
+            "max_cpu": 20
+        },
+        {
+            "min_cpu": 3,
+            "max_cpu": 24
+        },
+        {
+            "min_cpu": 4,
+            "max_cpu": 32
+        },
+        {
+            "min_cpu": 5,
+            "max_cpu": 40
+        },
+        {
+            "min_cpu": 10,
+            "max_cpu": 80
+        }
+    ]
+}

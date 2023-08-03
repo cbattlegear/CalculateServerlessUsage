@@ -2,19 +2,31 @@ $sql_db = Get-AzSqlDatabase -ResourceGroupName azure_resources -ServerName "sqla
 # Get the last 730 hours of usage, because then I don't have to do math.
 $metrics = Get-AzMetric -ResourceId $sql_db.ResourceId -MetricName "cpu_percent" -TimeGrain 00:01:00 -DetailedOutput -AggregationType Maximum -StartTime $(Get-Date).AddHours(-730)
 
-$min_serverless_cores = 0.5
-$max_serverless_cores = 2
-$min_cpu_seconds_in_minute = $min_serverless_cores * 60
-
 $is_vcore = ($sql_db.Family)
 
 $current_dtu = 0
+$current_vcore = 0
 
 if($is_vcore) {
     $current_dtu = $sql_db.Capacity * 100
+    $current_vcore = $sql_db.Capacity
 } else {
     $current_dtu = $sql_db.Capacity
+    $current_vcore = $sql_db.Capacity/100
 }
+
+$sql_min_max_info = Invoke-RestMethod -Uri "https://raw.githubusercontent.com/cbattlegear/CalculateServerlessUsage/main/min_max_vcores_serverless.json"
+$sku_match = @{}
+$sql_min_max_info.serverless_skus | Foreach-Object { 
+    if($_.max_cpu -ge $current_vcore)
+    { 
+        $sku_match = $_ 
+        break
+    } 
+}
+$min_serverless_cores = $sku_match.min_cpu
+$max_serverless_cores = $sku_match.max_cpu
+$min_cpu_seconds_in_minute = $min_serverless_cores * 60
 
 $total_cpu_seconds = 0
 

@@ -1,13 +1,13 @@
 param(
-    [string]$ResourceGroupName=""
-    [string]$ServerName=""
+    [string]$ResourceGroupName="",
+    [string]$ServerName="",
     [string]$DatabaseName=""
 )
 $sql_dbs = @{}
 $resultsArray = [System.Collections.ArrayList]@()
-if($ResourceGroupName -eq "" and $ServerName -eq "" and $DatabaseName -eq "") {
+if($ResourceGroupName -eq "" -and $ServerName -eq "" -and $DatabaseName -eq "") {
     $sql_dbs = Get-AzSqlServer | Get-AzSqlDatabase | Where-Object {$_.DatabaseName -ne "master" -and $_.SkuName -ne "DataWarehouse"}
-} elseif($ServerName -eq "" and $DatabaseName -eq "") {
+} elseif($ServerName -eq "" -and $DatabaseName -eq "") {
     $sql_dbs = Get-AzSqlServer -ResourceGroupName $ResourceGroupName | Get-AzSqlDatabase | Where-Object {$_.DatabaseName -ne "master" -and $_.SkuName -ne "DataWarehouse"}
 } elseif($DatabaseName -eq "") {
     $sql_dbs = Get-AzSqlDatabase -ResourceGroupName $ResourceGroupName -ServerName $ServerName
@@ -17,7 +17,7 @@ if($ResourceGroupName -eq "" and $ServerName -eq "" and $DatabaseName -eq "") {
 
 foreach($sql_db in $sql_dbs) {
     # Get the last 730 hours of usage, because then I don't have to do math.
-    $metrics = Get-AzMetric -ResourceId $sql_db.ResourceId -MetricName "cpu_percent" -TimeGrain 00:01:00 -DetailedOutput -AggregationType Maximum -StartTime $(Get-Date).AddHours(-730)
+    $metrics = Get-AzMetric -ResourceId $sql_db.ResourceId -MetricName "cpu_percent" -TimeGrain 00:01:00 -AggregationType Maximum -StartTime $(Get-Date).AddHours(-730)
 
     $is_vcore = ($sql_db.Family)
 
@@ -82,4 +82,4 @@ foreach($sql_db in $sql_dbs) {
     $resultsArray.Add($results)
 }
 
-$resultsArray
+Write-Output $resultsArray

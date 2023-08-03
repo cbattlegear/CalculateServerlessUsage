@@ -34,10 +34,10 @@ foreach($sql_db in $sql_dbs) {
 
     $sql_min_max_info = Invoke-RestMethod -Uri "https://raw.githubusercontent.com/cbattlegear/CalculateServerlessUsage/main/min_max_vcores_serverless.json"
     $sku_match = @{}
-    $sql_min_max_info.serverless_skus | Foreach-Object { 
-        if($_.max_cpu -ge $current_vcore)
+    foreach ($sku in $sql_min_max_info.serverless_skus ) {
+        if($sku.max_cpu -ge $current_vcore)
         { 
-            $sku_match = $_ 
+            $sku_match = $sku
             break
         } 
     }

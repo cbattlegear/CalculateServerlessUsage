@@ -16,9 +16,14 @@ if($ResourceGroupName -eq "" -and $ServerName -eq "" -and $DatabaseName -eq "") 
 }
 
 foreach($sql_db in $sql_dbs) {
+    Write-Information "Processed Database $($sql_db.DatabaseName) on Server $($sql_db.ServerName)"
+    if($sql_db.SkuName -eq "BC_Gen5" -or $sql_db.SkuName -eq "Premium") {
+        Write-Warning "Database $($sql_db.DatabaseName) on Server $($sql_db.ServerName) has a Premium or Business Critical sku, results will be potentially invalid."
+    }
     # Get the last 730 hours of usage, because then I don't have to do math.
+    Write-Debug "Starting Metrics Request"
     $metrics = Get-AzMetric -ResourceId $sql_db.ResourceId -MetricName "cpu_percent" -TimeGrain 00:01:00 -AggregationType Maximum -StartTime $(Get-Date).AddHours(-730)
-
+    Write-Debug "Finished Metrics Request"
     $is_vcore = ($sql_db.Family)
 
     $current_dtu = 0
@@ -68,16 +73,16 @@ foreach($sql_db in $sql_dbs) {
     $total_storage_cost = ($sql_db.MaxSizeBytes / 1Gb) * $storage_price_per_gig
 
     $total_cost = $total_cpu_seconds * $price_per_second
-    Write-Host "Total CPU seconds in 1 Month (730 hours): $total_cpu_seconds"
-    Write-Host "Total Cost for 1 Month (730 hours) of compute: `$$total_cost"
-    $results = @{
-        $ResourceGroupName = $sql_db.ResourceGroupName
-        $ServerName = $sql_db.ServerName
-        $DatabaseName = $sql_db.DatabaseName
-        $EstimatedCpuSeconds = $total_cpu_seconds
-        $EstimatedComputeCost = $total_cost
-        $EstimatedStorageCost = $total_storage_cost
-        $EstimatedTotalCost = $total_cost + $total_storage_cost
+    # Write-Host "Total CPU seconds in 1 Month (730 hours): $total_cpu_seconds"
+    # Write-Host "Total Cost for 1 Month (730 hours) of compute: `$$total_cost"
+    $results = [PSCustomObject] @{
+        ResourceGroupName = $sql_db.ResourceGroupName;
+        ServerName = $sql_db.ServerName;
+        DatabaseName = $sql_db.DatabaseName;
+        EstimatedCpuSeconds = $total_cpu_seconds;
+        EstimatedComputeCost = $total_cost;
+        EstimatedStorageCost = $total_storage_cost;
+        EstimatedTotalCost = $total_cost + $total_storage_cost;
     }
     $resultsArray.Add($results)
 }

@@ -1,36 +1,26 @@
 <#
 .SYNOPSIS
     A way to estimate serverless SQL costs based on provisioned SQL Usage. This is easiest to run in  something like Azure Cloud Shell.
-#>
 
-<#
 .DESCRIPTION
     This script estimates SQL Serverless costs by utilizing past usage of your provisioned databases.
     It gets this by querying the CPU metrics for your DB and doing some basic math to determine CPU Seconds
     used. From this is then queries the retail pricing information to get you the most accurate price.
 
     We also take into account your Max used storage and use that to calculate storage costs.
-#>
 
-<#
 .EXAMPLE
     ./CalculateServerlessUsage.ps1
     Will output estimates for all databases on your subscription.
-#>
 
-<#
 .EXAMPLE
     ./CalculateServerlessUsage.ps1 -ResourceGroupName <your resource group>
     Will output estimates for all databases in the specified resource group.
-#>
 
-<#
 .EXAMPLE
     ./CalculateServerlessUsage.ps1 -ResourceGroupName <your resource group> -ServerName <your server name>
     Will output estimates for all databases in the specified logical server.
-#>
 
-<#
 .EXAMPLE
     ./CalculateServerlessUsage.ps1 -ResourceGroupName <your resource group> -ServerName <your server name> -DatabaseName <your database name>
     Will output estimates for the specified database.

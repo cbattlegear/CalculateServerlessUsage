@@ -109,12 +109,14 @@ foreach($sql_db in $sql_dbs) {
         ResourceGroupName = $sql_db.ResourceGroupName;
         ServerName = $sql_db.ServerName;
         DatabaseName = $sql_db.DatabaseName;
+        MinCpuCores = $sku_match.min_cpu
+        MaxCpuCores = $sku_match.max_cpu
         EstimatedCpuSeconds = $total_cpu_seconds;
         EstimatedComputeCost = $total_cost;
         EstimatedStorageCost = $total_storage_cost;
         EstimatedTotalCost = $total_cost + $total_storage_cost;
     }
-    $resultsArray.Add($results)
+    $resultsArray.Add($results) | Out-Null
 }
 
 Write-Output $resultsArray

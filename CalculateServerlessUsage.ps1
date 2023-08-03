@@ -1,6 +1,46 @@
+<#
+.SYNOPSIS
+    A way to estimate serverless SQL costs based on provisioned SQL Usage. This is easiest to run in  something like Azure Cloud Shell.
+#>
+
+<#
+.DESCRIPTION
+    This script estimates SQL Serverless costs by utilizing past usage of your provisioned databases.
+    It gets this by querying the CPU metrics for your DB and doing some basic math to determine CPU Seconds
+    used. From this is then queries the retail pricing information to get you the most accurate price.
+
+    We also take into account your Max used storage and use that to calculate storage costs.
+#>
+
+<#
+.EXAMPLE
+    ./CalculateServerlessUsage.ps1
+    Will output estimates for all databases on your subscription.
+#>
+
+<#
+.EXAMPLE
+    ./CalculateServerlessUsage.ps1 -ResourceGroupName <your resource group>
+    Will output estimates for all databases in the specified resource group.
+#>
+
+<#
+.EXAMPLE
+    ./CalculateServerlessUsage.ps1 -ResourceGroupName <your resource group> -ServerName <your server name>
+    Will output estimates for all databases in the specified logical server.
+#>
+
+<#
+.EXAMPLE
+    ./CalculateServerlessUsage.ps1 -ResourceGroupName <your resource group> -ServerName <your server name> -DatabaseName <your database name>
+    Will output estimates for the specified database.
+#>
 param(
+    # The resource group you would like to query
     [string]$ResourceGroupName="",
+    # The sql server name (without .database.windows.net)
     [string]$ServerName="",
+    #The Database name that you want to check
     [string]$DatabaseName=""
 )
 $sql_dbs = @{}
@@ -16,7 +56,7 @@ if($ResourceGroupName -eq "" -and $ServerName -eq "" -and $DatabaseName -eq "") 
 }
 
 foreach($sql_db in $sql_dbs) {
-    Write-Information "Processed Database $($sql_db.DatabaseName) on Server $($sql_db.ServerName)"
+    Write-Information "Processing Database $($sql_db.DatabaseName) on Server $($sql_db.ServerName)"
     if($sql_db.SkuName -eq "BC_Gen5" -or $sql_db.SkuName -eq "Premium") {
         Write-Warning "Database $($sql_db.DatabaseName) on Server $($sql_db.ServerName) has a Premium or Business Critical sku, results will be potentially invalid."
     }
